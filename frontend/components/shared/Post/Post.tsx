@@ -7,6 +7,7 @@ import { HiHeart } from 'react-icons/hi';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { FaUser } from 'react-icons/fa';
 
 import { timestampToDate } from '@/utils/date';
 import { useAppSelector } from '@/lib/redux/hooks';
@@ -68,14 +69,21 @@ const Post = ({
 	return (
 		<Card className={`${classNames} group`}>
 			<CardHeader>
-				<div className="flex items-center">
-					<Avatar className="group w-10 h-10 relative cursor-pointer mr-2">
-						<AvatarImage
-							src={`${process.env.NEXT_PUBLIC_USERS_UPLOAD_URI}${author?.avatar}`}
-							className="pointer-events-none"
-						/>
-					</Avatar>
-					<span>{timestampToDate(createdAt)}</span>
+				<div className="flex items-center justify-between">
+					<div className="flex items-center overflow-hidden w-full">
+						<Avatar className="flex justify-center items-center group w-10 h-10 rounded-full relative cursor-pointer mr-2">
+							{author?.avatar ? (
+								<AvatarImage
+									src={`${process.env.NEXT_PUBLIC_USERS_UPLOAD_URI}${author?.avatar}`}
+									className="pointer-events-none"
+								/>
+							) : (
+								<FaUser className="w-full h-full" />
+							)}
+						</Avatar>
+						<span className="whitespace-nowrap overflow-hidden text-ellipsis">{author?.name}</span>
+					</div>
+					<span className="whitespace-nowrap">{timestampToDate(createdAt)}</span>
 				</div>
 				<Link href={`/post/${id}`} prefetch={false}>
 					<CardTitle className="break-words">{title}</CardTitle>
