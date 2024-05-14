@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { timestampToDate } from '@/utils/date';
-import { HiEmojiHappy } from 'react-icons/hi';
+import { FaUser } from 'react-icons/fa';
 import Link from 'next/link';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { z } from 'zod';
@@ -100,7 +100,7 @@ const Comment = ({
 							className="pointer-events-none w-full h-full"
 						/>
 					) : (
-						<HiEmojiHappy className="absolute w-full h-full justify-center items-center" />
+						<FaUser className="absolute w-full h-full justify-center items-center" />
 					)}
 				</Link>
 			</Avatar>

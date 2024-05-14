@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { HiEmojiHappy } from 'react-icons/hi';
+import { FaUser } from 'react-icons/fa';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { logout } from '@/lib/redux/slices/authSlice';
@@ -44,7 +44,7 @@ const Header = () => {
 												className="pointer-events-none w-full h-full"
 											/>
 										) : (
-											<HiEmojiHappy className="absolute w-full h-full justify-center items-center" />
+											<FaUser className="absolute w-full h-full justify-center items-center" />
 										)}
 									</Avatar>
 								</PopoverTrigger>

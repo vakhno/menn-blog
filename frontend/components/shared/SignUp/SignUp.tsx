@@ -2,7 +2,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { HiOutlineXCircle } from 'react-icons/hi';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
-import { HiEmojiHappy } from 'react-icons/hi';
+import { FaUser } from 'react-icons/fa';
 import { useToast } from '@/components/ui/use-toast';
 import {
 	Card,
@@ -146,7 +146,7 @@ const SignIn = () => {
 									<HiOutlinePlusCircle className="z-10 invisible pointer-events-none opacity-70 absolute w-full h-full justify-center items-center group-hover:visible" />
 								)}
 								<AvatarFallback className="pointer-events-none relative">
-									<HiEmojiHappy className="p-5 absolute w-full h-full justify-center items-center group-hover:hidden" />
+									<FaUser className="p-5 absolute w-full h-full justify-center items-center group-hover:hidden" />
 								</AvatarFallback>
 							</Avatar>
 							<input hidden type="file" ref={avatarInputRef} onChange={handleFileInputChange} />
