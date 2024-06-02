@@ -24,8 +24,9 @@ import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { signIn } from '@/lib/redux/slices/authSlice';
+import { signIn, googleAuth } from '@/lib/redux/slices/authSlice';
 import { useToast } from '@/components/ui/use-toast';
+import TextBetweenSeparates from '@/components/shared/TextBetweenSeparates/TextBetweenSeparates';
 
 const validationSchema = z.object({
 	email: z
@@ -61,6 +62,10 @@ const SignIn = (props: Props) => {
 		}
 	}, [status]);
 
+	const handleGoogleAuth = async () => {
+		await dispatch(googleAuth());
+	};
+
 	if (isAuthorized) {
 		router.push('/');
 		return;
@@ -75,6 +80,13 @@ const SignIn = (props: Props) => {
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
+						<Button
+							className="w-full justify-center mb-6"
+							onClick={handleGoogleAuth}
+							loading={status === 'loading'}>
+							Google
+						</Button>
+						<TextBetweenSeparates text="OR" className="mb-6" />
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 							<FormField
 								control={form.control}

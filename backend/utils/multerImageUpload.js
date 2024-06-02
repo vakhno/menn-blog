@@ -8,21 +8,27 @@ const multerImageUpload = (req, res, next) => {
 		// initialize root directory
 		const __dirname = path.resolve();
 		// path for post images folder
-		const uploadFolder = path.join(__dirname, 'uploads', 'posts');
+		const uploadsFolder = path.join(__dirname, 'uploads');
+		const postsFolder = path.join(uploadsFolder, 'posts');
+		// checking if 'uploads' folder exist
+		if (!fs.existsSync(uploadsFolder)) {
+			fs.mkdirSync(uploadsFolder);
+		}
+		// checking if 'posts' folder exist
+		if (!fs.existsSync(postsFolder)) {
+			fs.mkdirSync(postsFolder);
+		}
+
 		const storage = multer.diskStorage({
 			destination: function (req, file, cb) {
-				// create folder if it does not exist
-				if (!fs.existsSync(uploadFolder)) {
-					fs.mkdirSync(uploadFolder);
-				}
-				cb(null, uploadFolder);
+				cb(null, postsFolder);
 			},
 			filename: function (req, file, cb) {
-				const fileList = fs.readdirSync(uploadFolder);
+				const fileList = fs.readdirSync(postsFolder);
 				const alreadyExistFile = fileList.find((file) => file.startsWith(req.body.id));
 				if (alreadyExistFile) {
 					// removing already exist file, because replacing wouldn't work if files have different extensions (png and jpg e.g.)
-					fs.unlinkSync(`${uploadFolder}\\${alreadyExistFile}`);
+					fs.unlinkSync(`${postsFolder}\\${alreadyExistFile}`);
 				}
 				let filename = req.body.id + path.extname(file.originalname);
 				cb(null, filename);

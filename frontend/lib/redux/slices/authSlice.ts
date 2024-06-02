@@ -81,6 +81,14 @@ export const signUp = createAsyncThunk(
 	},
 );
 
+export const googleAuth = createAsyncThunk('auth/google', async () => {
+	return new Promise(() => {
+		setTimeout(async () => {
+			await axios.get('/auth/google');
+		}, 1500);
+	});
+});
+
 export const isUserAuthorized = createAsyncThunk('auth/isUserAuthorized', async () => {
 	try {
 		// { withCredentials: true } need to read cookies inside nodeJs controller
@@ -267,7 +275,15 @@ export const authSlice = createSlice({
 				const { post } = action.payload;
 				state.editablePost = post;
 			})
-			.addCase(getEditPost.rejected, () => {});
+			.addCase(getEditPost.rejected, () => {})
+			// google auth
+			.addCase(googleAuth.pending, (state) => {
+				state.status = 'loading';
+			})
+			.addCase(googleAuth.fulfilled, (state) => {
+				state.status = 'loaded';
+			})
+			.addCase(googleAuth.rejected, () => {});
 	},
 });
 
