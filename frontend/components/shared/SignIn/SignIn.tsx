@@ -27,6 +27,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { signIn, googleAuth } from '@/lib/redux/slices/authSlice';
 import { useToast } from '@/components/ui/use-toast';
 import TextBetweenSeparates from '@/components/shared/TextBetweenSeparates/TextBetweenSeparates';
+import Image from 'next/image';
 
 const validationSchema = z.object({
 	email: z
@@ -36,14 +37,11 @@ const validationSchema = z.object({
 	password: z.string().min(1, { message: 'Password is required!' }),
 });
 
-type Props = {};
-
-const SignIn = (props: Props) => {
+const SignIn = () => {
 	const { toast } = useToast();
 	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const { isAuthorized, status } = useAppSelector((state) => state.auth);
-	// const { alertLoading, setAlertTimeoutLoading } = useAlertTimeout();
 	const form = useForm({
 		defaultValues: {
 			email: '',
@@ -72,66 +70,61 @@ const SignIn = (props: Props) => {
 	}
 
 	return (
-		<>
-			<Card className="w-[380px]">
-				<CardHeader className="flex items-center">
-					<CardTitle>Sign In Form</CardTitle>
-					<CardDescription>Enter data to sign in</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<Form {...form}>
-						<Button
-							className="w-full justify-center mb-6"
-							onClick={handleGoogleAuth}
-							loading={status === 'loading'}>
-							Google
+		<Card>
+			<CardContent className="p-8">
+				<Form {...form}>
+					<Button className="w-full justify-center mb-6 flex gap-2" onClick={handleGoogleAuth}>
+						<Image
+							width={26}
+							height={26}
+							src="/social/google-logo.webp"
+							alt="Google logo"
+							className="brightness-0 invert dark:invert-0"
+						/>
+						Google
+					</Button>
+					<TextBetweenSeparates text="OR" className="mb-6" />
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Email</FormLabel>
+									<FormControl>
+										<Input type="email" placeholder="Email..." {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="password"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Password</FormLabel>
+									<FormControl>
+										<Input type="password" placeholder="Password..." {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button type="submit" className="w-full justify-center" loading={status === 'loading'}>
+							Submit
 						</Button>
-						<TextBetweenSeparates text="OR" className="mb-6" />
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-							<FormField
-								control={form.control}
-								name="email"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Email</FormLabel>
-										<FormControl>
-											<Input type="email" placeholder="Email..." {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="password"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Password</FormLabel>
-										<FormControl>
-											<Input type="password" placeholder="Password..." {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button
-								type="submit"
-								className="w-full justify-center"
-								loading={status === 'loading'}>
-								Submit
-							</Button>
-						</form>
-					</Form>
-				</CardContent>
-				<CardFooter className="flex justify-center">
-					<span>I don`t have an account!</span>
-					&nbsp;
-					<Link href="/signup" prefetch={false} className="font-bold">
-						Sign Up
-					</Link>
-				</CardFooter>
-			</Card>
-		</>
+					</form>
+				</Form>
+			</CardContent>
+			<CardFooter className="flex justify-center">
+				<span>I don`t have an account!</span>
+				&nbsp;
+				<Link href="/auth/signup" prefetch={false} className="font-bold">
+					Sign Up
+				</Link>
+			</CardFooter>
+		</Card>
 	);
 };
 

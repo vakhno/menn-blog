@@ -9,65 +9,71 @@ body {
 
 @layer base {
 	:root {
-		--background: 0 0% 100%;
-		--foreground: 0 0% 3.9%;
+		--background: rgba(255, 255, 255, 100%);
+		--foreground: rgba(10, 10, 10, 100%);
 
-		--card: 0 0% 100%;
-		--card-foreground: 0 0% 3.9%;
+		--card: rgba(255, 255, 255, 100%);
+		--card-foreground: rgba(10, 10, 10, 100%);
 
-		--popover: 0 0% 100%;
-		--popover-foreground: 0 0% 3.9%;
+		--popover: rgba(255, 255, 255, 100%);
+		--popover-foreground: rgba(10, 10, 10, 100%);
 
-		--primary: 0 0% 9%;
-		--primary-foreground: 0 0% 98%;
+		--primary: rgba(10, 10, 10, 100%);
+		--primary-foreground: rgba(255, 255, 255, 100%);
 
-		--secondary: 0 0% 96.1%;
-		--secondary-foreground: 0 0% 9%;
+		--secondary: rgba(255, 255, 255, 100%);
+		--secondary-foreground: rgba(10, 10, 10, 100%);
 
-		--muted: 0 0% 96.1%;
-		--muted-foreground: 0 0% 45.1%;
+		--muted: rgba(242, 242, 242, 100%);
+		--muted-foreground: rgba(115, 115, 115, 100%);
 
-		--accent: 0 0% 96.1%;
-		--accent-foreground: 0 0% 9%;
+		--accent: rgba(255, 255, 255, 100%);
+		--accent-foreground: rgba(10, 10, 10, 100%);
 
-		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 0 0% 98%;
+		--destructive: rgba(239, 67, 67, 100%);
+		--destructive-foreground: rgba(255, 255, 255, 100%);
 
-		--border: 0 0% 89.8%;
-		--input: 0 0% 89.8%;
-		--ring: 0 0% 3.9%;
+		--border: rgba(227, 227, 227, 100%);
+		--input: rgba(227, 227, 227, 100%);
+		--ring: rgba(10, 10, 10, 100%);
+		/* static colors */
+		--white: rgba(255, 255, 255, 100%);
+		--black: rgba(0, 0, 0, 100%);
 
 		--radius: 0.5rem;
 	}
 
 	.dark {
-		--background: 0 0% 3.9%;
-		--foreground: 0 0% 98%;
+		--background: rgba(10, 10, 10, 100%);
+		--foreground: rgba(255, 255, 255, 100%);
 
-		--card: 0 0% 3.9%;
-		--card-foreground: 0 0% 98%;
+		--card: rgba(10, 10, 10, 100%);
+		--card-foreground: rgba(255, 255, 255, 100%);
 
-		--popover: 0 0% 3.9%;
-		--popover-foreground: 0 0% 98%;
+		--popover: rgba(10, 10, 10, 100%);
+		--popover-foreground: rgba(255, 255, 255, 100%);
 
-		--primary: 0 0% 98%;
-		--primary-foreground: 0 0% 9%;
+		--primary: rgba(255, 255, 255, 100%);
+		--primary-foreground: rgba(10, 10, 10, 100%);
 
-		--secondary: 0 0% 14.9%;
-		--secondary-foreground: 0 0% 98%;
+		--secondary: rgba(38, 38, 38, 100%);
+		--secondary-foreground: rgba(255, 255, 255, 100%);
 
-		--muted: 0 0% 14.9%;
-		--muted-foreground: 0 0% 63.9%;
+		--muted: rgba(38, 38, 38, 100%);
+		--muted-foreground: rgba(161, 161, 161, 100%);
 
-		--accent: 0 0% 14.9%;
-		--accent-foreground: 0 0% 98%;
+		--accent: rgba(38, 38, 38, 100%);
+		--accent-foreground: rgba(255, 255, 255, 100%);
 
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 0 0% 98%;
+		--destructive: rgba(125, 28, 28, 100%);
+		--destructive-foreground: rgba(255, 255, 255, 100%);
 
-		--border: 0 0% 14.9%;
-		--input: 0 0% 14.9%;
-		--ring: 0 0% 83.1%;
+		--border: rgba(38, 38, 38, 100%);
+		--input: rgba(38, 38, 38, 100%);
+		--ring: rgba(212, 212, 212, 100%);
+		/* static colors */
+		--white: rgba(255, 255, 255, 100%);
+		--black: rgba(0, 0, 0, 100%);
 	}
 }
 

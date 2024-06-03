@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { logout } from '@/lib/redux/slices/authSlice';
 import { useRouter } from 'next/navigation';
+import ThemeSwitcher from '@/components/shared/ThemeSwitcher/ThemeSwitcher';
 
 const Header = () => {
 	const { isAuthorized, user } = useAppSelector((state) => state.auth);
@@ -37,7 +38,7 @@ const Header = () => {
 							</Link>
 							<Popover>
 								<PopoverTrigger>
-									<Avatar className="group relative cursor-pointer bg-white rounded-full">
+									<Avatar className="group relative cursor-pointer bg-white rounded-full mr-4">
 										{user.avatar ? (
 											<AvatarImage
 												src={`${process.env.NEXT_PUBLIC_USERS_UPLOAD_URI}${user.avatar}`}
@@ -62,11 +63,12 @@ const Header = () => {
 						</div>
 					) : (
 						<Button variant="secondary" className="mr-4">
-							<Link href="/signin" prefetch={false}>
+							<Link href="/auth/signin" prefetch={false}>
 								Sign In
 							</Link>
 						</Button>
 					)}
+					<ThemeSwitcher />
 				</div>
 			</div>
 		</div>

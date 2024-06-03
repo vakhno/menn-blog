@@ -30,7 +30,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { signUp } from '@/lib/redux/slices/authSlice';
+import { signUp, googleAuth } from '@/lib/redux/slices/authSlice';
+import TextBetweenSeparates from '@/components/shared/TextBetweenSeparates/TextBetweenSeparates';
+import Image from 'next/image';
 
 const validationSchema = z
 	.object({
@@ -123,101 +125,111 @@ const SignIn = () => {
 		}
 	};
 
+	const handleGoogleAuth = async () => {
+		await dispatch(googleAuth());
+	};
+
 	return (
-		<>
-			<Card className="w-[380px]">
-				<CardHeader className="flex items-center">
-					<CardTitle>Sign Up Form</CardTitle>
-					<CardDescription>Enter data to sign up</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-							<Avatar
-								className="group m-auto w-20 h-20 relative cursor-pointer"
-								onClick={handleAvatarClick}>
-								<AvatarImage
-									src={previewAvatar}
-									className="pointer-events-none group-hover:blur-md"
-								/>
-								{previewAvatar ? (
-									<HiOutlineXCircle className="z-10 invisible pointer-events-none opacity-70 absolute w-full h-full justify-center items-center group-hover:visible" />
-								) : (
-									<HiOutlinePlusCircle className="z-10 invisible pointer-events-none opacity-70 absolute w-full h-full justify-center items-center group-hover:visible" />
-								)}
-								<AvatarFallback className="pointer-events-none relative">
-									<FaUser className="p-5 absolute w-full h-full justify-center items-center group-hover:hidden" />
-								</AvatarFallback>
-							</Avatar>
-							<input hidden type="file" ref={avatarInputRef} onChange={handleFileInputChange} />
-							<FormField
-								control={form.control}
-								name="name"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Name</FormLabel>
-										<FormControl>
-											<Input placeholder="Name..." {...field} />
-										</FormControl>
-										<FormDescription>This is your public display name.</FormDescription>
-										<FormMessage />
-									</FormItem>
-								)}
+		<Card>
+			<CardContent className="p-8">
+				<Button className="w-full justify-center mb-6 flex gap-2" onClick={handleGoogleAuth}>
+					<Image
+						width={26}
+						height={26}
+						src="/social/google-logo.webp"
+						alt="Google logo"
+						className="brightness-0 invert dark:invert-0"
+					/>
+					Google
+				</Button>
+				<TextBetweenSeparates text="OR" className="mb-6" />
+
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+						<Avatar
+							className="group m-auto w-20 h-20 relative cursor-pointer"
+							onClick={handleAvatarClick}>
+							<AvatarImage
+								src={previewAvatar}
+								className="pointer-events-none group-hover:blur-md"
 							/>
-							<FormField
-								control={form.control}
-								name="email"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Email</FormLabel>
-										<FormControl>
-											<Input placeholder="Email..." {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="password"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Password</FormLabel>
-										<FormControl>
-											<Input type="password" placeholder="Password..." {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="confirmPassword"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Confirm Password</FormLabel>
-										<FormControl>
-											<Input type="password" placeholder="Confirm Password..." {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button className="w-full" type="submit" loading={status === 'loading'}>
-								Submit
-							</Button>
-						</form>
-					</Form>
-				</CardContent>
-				<CardFooter className="flex justify-center">
-					<span>I already have an account!</span>
-					&nbsp;
-					<Link href="/signin" prefetch={false} className="font-bold">
-						Sign In!
-					</Link>
-				</CardFooter>
-			</Card>
-		</>
+							{previewAvatar ? (
+								<HiOutlineXCircle className="z-10 invisible pointer-events-none opacity-70 absolute w-full h-full justify-center items-center group-hover:visible" />
+							) : (
+								<HiOutlinePlusCircle className="z-10 invisible pointer-events-none opacity-70 absolute w-full h-full justify-center items-center group-hover:visible" />
+							)}
+							<AvatarFallback className="pointer-events-none relative">
+								<FaUser className="p-5 absolute w-full h-full justify-center items-center group-hover:hidden" />
+							</AvatarFallback>
+						</Avatar>
+						<input hidden type="file" ref={avatarInputRef} onChange={handleFileInputChange} />
+						<FormField
+							control={form.control}
+							name="name"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Name</FormLabel>
+									<FormControl>
+										<Input placeholder="Name..." {...field} />
+									</FormControl>
+									<FormDescription>This is your public display name.</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Email</FormLabel>
+									<FormControl>
+										<Input placeholder="Email..." {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="password"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Password</FormLabel>
+									<FormControl>
+										<Input type="password" placeholder="Password..." {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="confirmPassword"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Confirm Password</FormLabel>
+									<FormControl>
+										<Input type="password" placeholder="Confirm Password..." {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button className="w-full" type="submit" loading={status === 'loading'}>
+							Submit
+						</Button>
+					</form>
+				</Form>
+			</CardContent>
+			<CardFooter className="flex justify-center">
+				<span>I already have an account!</span>
+				&nbsp;
+				<Link href="/auth/signin" prefetch={false} className="font-bold">
+					Sign In!
+				</Link>
+			</CardFooter>
+		</Card>
 	);
 };
 

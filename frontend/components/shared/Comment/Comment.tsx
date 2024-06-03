@@ -82,7 +82,7 @@ const Comment = ({
 				description: `To comment you should Sign In`,
 				variant: 'destructive',
 				action: (
-					<ToastAction altText="Sign In" onClick={() => router.push('/signin')}>
+					<ToastAction altText="Sign In" onClick={() => router.push('/auth/signin')}>
 						Sign In
 					</ToastAction>
 				),

@@ -14,8 +14,15 @@ const UserSchema = new Schema(
 		},
 		password: {
 			type: String,
-			required: true,
+			required: function () {
+				return !this.isSocial;
+			},
 			select: false,
+		},
+		isSocial: {
+			type: Boolean,
+			required: true,
+			default: false,
 		},
 		avatar: {
 			type: String,

@@ -82,11 +82,9 @@ export const signUp = createAsyncThunk(
 );
 
 export const googleAuth = createAsyncThunk('auth/google', async () => {
-	return new Promise(() => {
-		setTimeout(async () => {
-			await axios.get('/auth/google');
-		}, 1500);
-	});
+	const result = await axios.get('/auth/google');
+	const { url } = result.data;
+	window.location.href = url;
 });
 
 export const isUserAuthorized = createAsyncThunk('auth/isUserAuthorized', async () => {
@@ -277,12 +275,8 @@ export const authSlice = createSlice({
 			})
 			.addCase(getEditPost.rejected, () => {})
 			// google auth
-			.addCase(googleAuth.pending, (state) => {
-				state.status = 'loading';
-			})
-			.addCase(googleAuth.fulfilled, (state) => {
-				state.status = 'loaded';
-			})
+			.addCase(googleAuth.pending, (state) => {})
+			.addCase(googleAuth.fulfilled, (state) => {})
 			.addCase(googleAuth.rejected, () => {});
 	},
 });
