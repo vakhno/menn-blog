@@ -48,10 +48,13 @@ export const editPost = async (req, res) => {
 };
 
 export const getPosts = async (req, res) => {
+	console.log('111');
 	try {
 		// quantity of posts
 		const limit = 10;
-		const { page } = req.body;
+		let { page } = req.body;
+		// checking if page is number
+		page = isFinite(page) ? +page : 1;
 		const posts = await PostModel.find()
 			.limit(limit * page)
 			.sort({ createdAt: -1 })
@@ -69,6 +72,7 @@ export const getPosts = async (req, res) => {
 		const isAllPostsUploaded = posts.length === totalPostsCount;
 		return res.status(200).json({ success: true, isAllUploaded: isAllPostsUploaded, posts });
 	} catch (error) {
+		console.log(error);
 		return res.status(500).json({ error, success: false });
 	}
 };

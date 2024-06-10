@@ -8,7 +8,7 @@ export const JWTCreation = (id, res) => {
 		},
 		process.env.JWT_SECRET,
 		{
-			expiresIn: '1',
+			expiresIn: '1h',
 		},
 	);
 	// httpOnly for server side access only

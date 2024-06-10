@@ -129,6 +129,7 @@ export const GoogleCallback = async (req, res) => {
 			user = newUser;
 		}
 		JWTCreation(user._id, res);
+		res.cookie('social-token', access_token, { HttpOnly: true, secure: false });
 		res.redirect(process.env.AUTH_SUCCESS_REDIRECT);
 	} catch (error) {
 		res.redirect('http://localhost:3000/');

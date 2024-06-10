@@ -5,6 +5,7 @@ export type authorType = {
 	avatar: string;
 	posts: string[];
 	likedComments: string[];
+	isSocial: boolean;
 	likedPosts: string[];
 	createdAt: string;
 	updatedAt: string;

@@ -174,6 +174,7 @@ export const authSlice = createSlice({
 			state.isAuthorized = false;
 			// removing token from cookies
 			document.cookie = 'token' + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+			document.cookie = 'social-token' + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 			router.push('/');
 		},
 		cleanEditablePost: (state, _) => {

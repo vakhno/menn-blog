@@ -76,6 +76,10 @@ const page = () => {
 		dispatch(postPost({ fields, image, router }));
 	};
 
+	const handleCancel = () => {
+		router.push('/');
+	};
+
 	return (
 		<div className="editor-container pt-5 mx-auto max-w-4xl">
 			<DragAndDropFile handleChange={imageChange} />
@@ -248,6 +252,9 @@ const page = () => {
 					</Command>
 				</PopoverContent>
 			</Popover>
+			<Button className="float-end" onClick={handleCancel}>
+				Cancel
+			</Button>
 			<Button className="float-end" type="submit" onClick={handleSubmit}>
 				Submit
 			</Button>

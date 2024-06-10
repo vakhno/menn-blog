@@ -196,6 +196,11 @@ const postSlice = createSlice({
 	name: 'post',
 	initialState,
 	reducers: {
+		setPosts: (state, action) => {
+			const { posts, isAllPostsUploaded } = action.payload;
+			state.posts.data = posts;
+			state.posts.isAllUploaded = isAllPostsUploaded;
+		},
 		setPage: (state, action) => {
 			const { page } = action.payload;
 			if (typeof page === 'number' && page > 0) {
@@ -340,5 +345,5 @@ const postSlice = createSlice({
 	},
 });
 
-export const { setPage, setReplyForm, updatePostLikes } = postSlice.actions;
+export const { setPosts, setPage, setReplyForm, updatePostLikes } = postSlice.actions;
 export default postSlice.reducer;

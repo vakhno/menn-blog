@@ -64,11 +64,6 @@ const SignIn = () => {
 		await dispatch(googleAuth());
 	};
 
-	if (isAuthorized) {
-		router.push('/');
-		return;
-	}
-
 	return (
 		<Card>
 			<CardContent className="p-8">

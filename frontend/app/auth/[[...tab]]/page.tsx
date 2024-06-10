@@ -17,7 +17,10 @@ const page = () => {
 	};
 
 	return (
-		<Tabs onValueChange={handleTabChange} defaultValue={defaultTab} className="w-[400px]">
+		<Tabs
+			onValueChange={handleTabChange}
+			defaultValue={defaultTab}
+			className="w-[460px] h-full content-center p-6">
 			<TabsList className="grid w-full grid-cols-2">
 				<TabsTrigger value="signin">Sign In</TabsTrigger>
 				<TabsTrigger value="signup">Sign Up</TabsTrigger>

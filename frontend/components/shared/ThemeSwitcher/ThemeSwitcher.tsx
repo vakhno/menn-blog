@@ -8,7 +8,7 @@ type Props = { className?: string };
 
 const ThemeSwitcher = ({ className }: Props) => {
 	const [theme, setTheme] = useState<'dark' | 'light'>(
-		window.localStorage.getItem('theme') === 'light' ? 'light' : 'dark',
+		localStorage.getItem('theme') === 'light' ? 'light' : 'dark',
 	);
 
 	useEffect(() => {
@@ -19,7 +19,7 @@ const ThemeSwitcher = ({ className }: Props) => {
 			document.body.classList.remove('light');
 			document.body.classList.add('dark');
 		}
-		window.localStorage.setItem('theme', theme);
+		localStorage.setItem('theme', theme);
 	}, [theme]);
 
 	return (

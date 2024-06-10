@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { FaUser } from 'react-icons/fa';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { logout } from '@/lib/redux/slices/authSlice';
 import { useRouter } from 'next/navigation';
 import ThemeSwitcher from '@/components/shared/ThemeSwitcher/ThemeSwitcher';
+import { cn } from '@/lib/utils';
 
 const Header = () => {
 	const { isAuthorized, user } = useAppSelector((state) => state.auth);
@@ -21,9 +22,9 @@ const Header = () => {
 			dispatch(logout({ router }));
 		}
 	};
-
+	console.log(user);
 	return (
-		<div className="w-full bg-black sticky top-0 px-4 py-3 z-50">
+		<div className="w-full bg-black dark:bg-white sticky top-0 px-4 py-3 z-50">
 			<div className="flex justify-between h-full items-center">
 				<Link href="/" prefetch={false}>
 					<Button variant="secondary">Blog</Button>
@@ -38,14 +39,18 @@ const Header = () => {
 							</Link>
 							<Popover>
 								<PopoverTrigger>
-									<Avatar className="group relative cursor-pointer bg-white rounded-full mr-4">
+									<Avatar className="flex justify-center items-center group relative cursor-pointer bg-white dark:bg-black rounded-full mr-4">
 										{user.avatar ? (
 											<AvatarImage
-												src={`${process.env.NEXT_PUBLIC_USERS_UPLOAD_URI}${user.avatar}`}
+												src={`${
+													user.isSocial
+														? user.avatar
+														: process.env.NEXT_PUBLIC_USERS_UPLOAD_URI + user.avatar
+												}`}
 												className="pointer-events-none w-full h-full"
 											/>
 										) : (
-											<FaUser className="absolute w-full h-full justify-center items-center" />
+											<FaUser className="absolute w-6 h-6 justify-center items-center dark:fill-white" />
 										)}
 									</Avatar>
 								</PopoverTrigger>
@@ -62,11 +67,12 @@ const Header = () => {
 							</Popover>
 						</div>
 					) : (
-						<Button variant="secondary" className="mr-4">
-							<Link href="/auth/signin" prefetch={false}>
-								Sign In
-							</Link>
-						</Button>
+						<Link
+							href="/auth/signin"
+							prefetch={false}
+							className={cn('mr-4', buttonVariants({ variant: 'secondary' }))}>
+							Sign In
+						</Link>
 					)}
 					<ThemeSwitcher />
 				</div>
