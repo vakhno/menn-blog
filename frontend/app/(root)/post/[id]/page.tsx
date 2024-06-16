@@ -1,39 +1,67 @@
-'use client';
-import React, { useEffect } from 'react';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
-import 'froala-editor/css/froala_style.min.css';
-import 'froala-editor/js/plugins.pkgd.min.js';
+'use server';
+import React from 'react';
+// import 'froala-editor/css/froala_editor.pkgd.min.css';
+// import 'froala-editor/css/froala_style.min.css';
+// import 'froala-editor/js/plugins.pkgd.min.js';
 import FullPost from '@/components/shared/FullPost/FullPost';
-import { useParams } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { openPost } from '@/lib/redux/slices/postSlice';
-import { useAuthorized } from '@/hooks/useAuthorized';
 import { commentsCount } from '@/utils/comments';
+import { Suspense } from 'react';
+import PostSkeleton from '@/components/skeletons/PostSkeleton';
+import SomethingWentWrong from '@/components/shared/SomethingWentWrong/SomethingWentWrong';
+import { postType } from '@/types/types';
 
-const page = () => {
-	useAuthorized();
-	const { id } = useParams<{ id: string }>();
-	const { openedPost, status } = useAppSelector((state) => state.post);
-	const dispatch = useAppDispatch();
+const getPost = async (
+	id: string,
+): Promise<{ success: true; post: postType } | { success: false }> => {
+	const response = await fetch('http://localhost:5555/post/post-by-id', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Cache-Control': 'no-store',
+		},
+		cache: 'no-store',
+		body: JSON.stringify({ id }),
+	});
 
-	useEffect(() => {
-		dispatch(openPost({ id }));
-	}, []);
+	if (!response.ok) {
+		throw new Error();
+	}
 
-	return status === 'loading' ? null : status === 'loaded' && openedPost ? (
-		<FullPost
-			id={openedPost._id}
-			title={openedPost.title}
-			description={openedPost.description}
-			text={openedPost.text}
-			image={openedPost.image}
-			tags={openedPost.tags}
-			viewsCount={openedPost.viewsCount}
-			author={openedPost.author}
-			likesCount={openedPost.likes}
-			commentsCount={commentsCount(openedPost.comments)}
-		/>
-	) : null;
+	return response.json();
+};
+
+type Props = {
+	params: { id: string };
+};
+
+const page = async ({ params }: Props) => {
+	try {
+		const id = params['id'];
+		const result = await getPost(id);
+		const { success } = result;
+		if (!success) {
+			throw new Error();
+		}
+		const { post } = result;
+		return (
+			<Suspense fallback={<PostSkeleton />}>
+				<FullPost
+					id={post._id}
+					title={post.title}
+					description={post.description}
+					text={post.text}
+					image={post.image}
+					tags={post.tags}
+					author={post.author}
+					likesCount={post.likes}
+					comments={post.comments}
+					commentsCount={commentsCount(post.comments)}
+				/>
+			</Suspense>
+		);
+	} catch (error) {
+		return <SomethingWentWrong />;
+	}
 };
 
 export default page;

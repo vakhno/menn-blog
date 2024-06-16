@@ -48,7 +48,6 @@ export const editPost = async (req, res) => {
 };
 
 export const getPosts = async (req, res) => {
-	console.log('111');
 	try {
 		// quantity of posts
 		const limit = 10;

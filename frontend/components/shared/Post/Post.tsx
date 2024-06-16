@@ -1,21 +1,24 @@
 'use client';
 import React from 'react';
+// icons
 import { HiChatAlt } from 'react-icons/hi';
 import { HiPencilAlt } from 'react-icons/hi';
 import { HiTrash } from 'react-icons/hi';
 import { HiHeart } from 'react-icons/hi';
+import { FaUser } from 'react-icons/fa';
+// UI components
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { FaUser } from 'react-icons/fa';
-
+// utils
 import { timestampToDate } from '@/utils/date';
-import { useAppSelector } from '@/lib/redux/hooks';
-import Link from 'next/link';
-
-import { useAppDispatch } from '@/lib/redux/hooks';
+// redux hooks
+import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks';
+// redux
 import { deletePost } from '@/lib/redux/slices/postSlice';
-
+// next tools
+import Link from 'next/link';
+// components
 import LikePostButton from '@/components/shared/LikePostButton/LikePostButton';
 
 import {
@@ -51,7 +54,6 @@ const Post = ({
 	createdAt,
 	tags,
 	classNames,
-	viewsCount,
 	commentsCount,
 	likesCount,
 }: Props) => {
@@ -74,7 +76,11 @@ const Post = ({
 						<Avatar className="flex justify-center items-center group w-10 h-10 rounded-full relative cursor-pointer mr-2">
 							{author?.avatar ? (
 								<AvatarImage
-									src={`${process.env.NEXT_PUBLIC_USERS_UPLOAD_URI}${author?.avatar}`}
+									src={`${
+										author.isSocial
+											? author.avatar
+											: process.env.NEXT_PUBLIC_USERS_UPLOAD_URI + author.avatar
+									}`}
 									className="pointer-events-none"
 								/>
 							) : (
@@ -85,7 +91,7 @@ const Post = ({
 					</div>
 					<span className="whitespace-nowrap">{timestampToDate(createdAt)}</span>
 				</div>
-				<Link href={`/post/${id}`} prefetch={false}>
+				<Link href={`/post/${id}`}>
 					<CardTitle className="break-words">{title}</CardTitle>
 				</Link>
 				<CardDescription>{description}</CardDescription>
@@ -103,7 +109,7 @@ const Post = ({
 				<div className="flex gap-2 justify-end">
 					{_id && author && _id === author._id ? (
 						<>
-							<Link href={`/post/${id}/edit`} prefetch={false}>
+							<Link href={`/post/${id}/edit`}>
 								<Button variant="outline" size="icon">
 									<HiPencilAlt />
 								</Button>

@@ -1,10 +1,15 @@
 import React from 'react';
+// redux hooks
 import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks';
+// redux
 import { updateUserLikes } from '@/lib/redux/slices/authSlice';
 import { updatePostLikes } from '@/lib/redux/slices/postSlice';
+// UI components
 import { useToast } from '@/components/ui/use-toast';
 import { ToastAction } from '@/components/ui/toast';
+// next tools
 import { useRouter } from 'next/navigation';
+// components
 import LikeButton from '@/components/shared/LikeButton/LikeButton';
 
 interface Props {

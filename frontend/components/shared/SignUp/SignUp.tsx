@@ -1,17 +1,12 @@
 'use client';
 import React, { useRef, useState, useEffect } from 'react';
+// icons
 import { HiOutlineXCircle } from 'react-icons/hi';
 import { HiOutlinePlusCircle } from 'react-icons/hi';
 import { FaUser } from 'react-icons/fa';
+// UI components
 import { useToast } from '@/components/ui/use-toast';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
 	Form,
 	FormControl,
@@ -22,17 +17,23 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+// react-hook-form
+import { useForm } from 'react-hook-form';
+// zod
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+// next tools
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { signUp, googleAuth } from '@/lib/redux/slices/authSlice';
-import TextBetweenSeparates from '@/components/shared/TextBetweenSeparates/TextBetweenSeparates';
 import Image from 'next/image';
+// redux hooks
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+// redux
+import { signUp, googleAuth } from '@/lib/redux/slices/authSlice';
+// components
+import TextBetweenSeparates from '@/components/shared/TextBetweenSeparates/TextBetweenSeparates';
 
 const validationSchema = z
 	.object({
@@ -225,7 +226,7 @@ const SignIn = () => {
 			<CardFooter className="flex justify-center">
 				<span>I already have an account!</span>
 				&nbsp;
-				<Link href="/auth/signin" prefetch={false} className="font-bold">
+				<Link href="/auth/signin" className="font-bold">
 					Sign In!
 				</Link>
 			</CardFooter>

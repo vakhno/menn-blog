@@ -1,13 +1,7 @@
 'use client';
-import React, { useEffect, useTransition } from 'react';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
+import React, { useEffect } from 'react';
+// UI components
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
 	Form,
 	FormControl,
@@ -17,17 +11,23 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
+// react-hook-form
+import { useForm } from 'react-hook-form';
+// zod
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+// next tools
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { signIn, googleAuth } from '@/lib/redux/slices/authSlice';
-import { useToast } from '@/components/ui/use-toast';
-import TextBetweenSeparates from '@/components/shared/TextBetweenSeparates/TextBetweenSeparates';
 import Image from 'next/image';
+// redux hooks
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+// redux
+import { signIn, googleAuth } from '@/lib/redux/slices/authSlice';
+// components
+import TextBetweenSeparates from '@/components/shared/TextBetweenSeparates/TextBetweenSeparates';
 
 const validationSchema = z.object({
 	email: z
@@ -115,8 +115,8 @@ const SignIn = () => {
 			<CardFooter className="flex justify-center">
 				<span>I don`t have an account!</span>
 				&nbsp;
-				<Link href="/auth/signup" prefetch={false} className="font-bold">
-					Sign Up
+				<Link href="/auth/signup" className="font-bold">
+					Sign Up!
 				</Link>
 			</CardFooter>
 		</Card>

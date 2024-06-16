@@ -1,12 +1,11 @@
-export const dynamic = 'auto';
-
+'use server';
+// export const dynamic = 'auto';
 import { Suspense } from 'react';
 import PostList from '@/components/shared/PostList/PostList';
 import PostListSkeleton from '@/components/skeletons/PostListSkeleton';
 import SomethingWentWrong from '@/components/shared/SomethingWentWrong/SomethingWentWrong';
 
 const getPosts = async (page: string) => {
-	// for cache
 	const response = await fetch('http://localhost:5555/post/post-by-page', {
 		method: 'POST',
 		headers: {
@@ -14,11 +13,9 @@ const getPosts = async (page: string) => {
 			// 'Cache-Control': 'no-store',
 		},
 		body: JSON.stringify({ page }),
-		// for cache
 		// cache: 'no-store',
 		// next: { revalidate: 60 },
 	});
-	console.log(response);
 	if (!response.ok) {
 		throw new Error();
 	}

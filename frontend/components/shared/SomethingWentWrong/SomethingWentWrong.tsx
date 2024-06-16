@@ -1,5 +1,8 @@
+'use client';
 import React from 'react';
+// UI components
 import { buttonVariants } from '@/components/ui/button';
+// next tools
 import Link from 'next/link';
 
 type Props = {

@@ -252,12 +252,12 @@ const page = () => {
 					</Command>
 				</PopoverContent>
 			</Popover>
-			<Button className="float-end" onClick={handleCancel}>
-				Cancel
-			</Button>
-			<Button className="float-end" type="submit" onClick={handleSubmit}>
-				Submit
-			</Button>
+			<div className="flex w-full justify-between">
+				<Button onClick={handleCancel}>Cancel</Button>
+				<Button type="submit" onClick={handleSubmit}>
+					Submit
+				</Button>
+			</div>
 		</div>
 	);
 };

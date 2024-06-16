@@ -1,102 +1,109 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
+// UI components
 import { Button } from '@/components/ui/button';
-import { timestampToDate } from '@/utils/date';
-import { FaUser } from 'react-icons/fa';
-import Link from 'next/link';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Textarea } from '@/components/ui/textarea';
-
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { setReplyForm, addCommentToPost } from '@/lib/redux/slices/postSlice';
-import LikeCommentButton from '@/components/shared/LikeCommentButton/LikeCommentButton';
-
-import { commentType } from '@/types/types';
 import { useToast } from '@/components/ui/use-toast';
 import { ToastAction } from '@/components/ui/toast';
+// icons
+import { FaUser } from 'react-icons/fa';
+// components
+import LikeCommentButton from '@/components/shared/LikeCommentButton/LikeCommentButton';
+import TextareaForm from '@/components/shared/TextareaForm/TextareaForm';
+// zod
+import { z } from 'zod';
+// utils
+import { timestampToDate } from '@/utils/date';
+// next tools
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+// types
+import { commentType } from '@/types/types';
+// redux hooks
+import { useAppSelector } from '@/lib/redux/hooks';
 
-const replyValidationSchema = z.object({
-	reply: z.string().min(1, { message: 'Reply is too short!' }),
+const TextareaFormValidationSchema = z.object({
+	text: z.string().min(1, { message: 'Reply is too short!' }),
 });
 
-type ReplyFormValueTypes = {
-	reply: string;
+const newComment = async (params: {
+	parentId?: string;
+	userId: string | null;
+	comment: string;
+	postId: string;
+	replies: commentType[];
+}) => {
+	const { replies } = params;
+	const response = await fetch('http://localhost:5555/post/send-comment', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(params),
+	});
+	const result = await response.json();
+	const { comment } = result;
+	let updatedReplies = [];
+	updatedReplies = [...replies, comment];
+	return updatedReplies;
 };
 
 type Props = {
 	id: string;
-	parentId?: string | null;
 	name: string | null;
 	postId: string;
 	date: Date | string;
 	text: string;
 	avatar: string | null;
 	replies?: commentType[];
-	likedComments: string[];
+	isSocial: boolean;
 };
 
-const Comment = ({
-	id,
-	name,
-	postId,
-	parentId,
-	date,
-	text,
-	avatar,
-	replies,
-	likedComments,
-}: Props) => {
+const Comment = ({ id, name, postId, date, text, avatar, replies, isSocial }: Props) => {
 	const { toast } = useToast();
 	const router = useRouter();
-	const dispatch = useAppDispatch();
 	const user = useAppSelector((state) => state.auth.user);
 	const userId = user?._id || null;
-	const { isCommentReplyFormActive } = useAppSelector((state) => state.post);
-	const form = useForm<ReplyFormValueTypes>({
-		defaultValues: {
-			reply: '',
-		},
-		resolver: zodResolver(replyValidationSchema),
-	});
+	const [isCommentReplyFormActive, setIsCommentReplyFormActive] = useState<boolean>(false);
+	const [allReplies, setAllReplies] = useState<commentType[]>(replies || []);
+	const [comment, setComment] = useState<string>('');
 
-	const handleReplySubmit = (values: { reply: string }) => {
-		const { reply } = values;
-		const fields = {
-			comment: reply,
-			userId,
+	const handleCommentChange = (value: string) => {
+		setComment(value);
+	};
+
+	const SuccessCommentEntering = async () => {
+		const newReplies = await newComment({
+			userId: userId,
 			postId: postId,
-			// checking if parentId then it is a reply if not a comment
+			comment: comment,
 			parentId: id,
-		};
-		if (userId) {
-			dispatch(addCommentToPost(fields));
-		} else {
-			toast({
-				title: 'Error',
-				description: `To comment you should Sign In`,
-				variant: 'destructive',
-				action: (
-					<ToastAction altText="Sign In" onClick={() => router.push('/auth/signin')}>
-						Sign In
-					</ToastAction>
-				),
-			});
-		}
+			replies: allReplies,
+		});
+		setAllReplies(newReplies);
+		setIsCommentReplyFormActive(false);
+	};
+
+	const ErrorCommentEntering = () => {
+		toast({
+			title: 'Error',
+			description: `To comment you should Sign In`,
+			variant: 'destructive',
+			action: (
+				<ToastAction altText="Sign In" onClick={() => router.push('/auth/signin')}>
+					Sign In
+				</ToastAction>
+			),
+		});
 	};
 
 	return (
 		<div className="flex w-full gap-2 mb-4">
 			<Avatar className="group relative cursor-pointer">
-				<Link href="/" prefetch={false}>
+				<Link href="/">
 					{avatar ? (
 						<AvatarImage
-							src={`${process.env.NEXT_PUBLIC_USERS_UPLOAD_URI}${avatar}`}
+							src={`${isSocial ? avatar : process.env.NEXT_PUBLIC_USERS_UPLOAD_URI + avatar}`}
 							className="pointer-events-none w-full h-full"
 						/>
 					) : (
@@ -113,56 +120,44 @@ const Comment = ({
 				<div className="flex justify-between">
 					<div className="flex-col w-full">
 						<div className="flex justify-between">
-							{isCommentReplyFormActive === id ? (
-								<Button className="mb-2" onClick={() => dispatch(setReplyForm({ id: null }))}>
+							{isCommentReplyFormActive ? (
+								<Button
+									className="mb-2"
+									onClick={() => setIsCommentReplyFormActive(!isCommentReplyFormActive)}>
 									Do not reply
 								</Button>
 							) : (
-								<Button className="mb-2" onClick={() => dispatch(setReplyForm({ id }))}>
+								<Button
+									className="mb-2"
+									onClick={() => setIsCommentReplyFormActive(!isCommentReplyFormActive)}>
 									Reply
 								</Button>
 							)}
 							<LikeCommentButton commentId={id} userId={userId} />
 						</div>
-						{isCommentReplyFormActive === id ? (
-							<Form {...form}>
-								<form
-									onSubmit={form.handleSubmit(handleReplySubmit)}
-									className="flex flex-col w-full">
-									<FormField
-										control={form.control}
-										name="reply"
-										render={({ field }) => (
-											<FormItem className="mb-2">
-												<FormControl>
-													<Textarea placeholder="Comment..." className="resize-none" {...field} />
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-									{form.getValues('reply').length ? (
-										<Button type="submit" className="self-end bg">
-											Submit
-										</Button>
-									) : null}
-								</form>
-							</Form>
+						{isCommentReplyFormActive ? (
+							<TextareaForm
+								isSuccess={!!userId}
+								handleChange={handleCommentChange}
+								successEnter={SuccessCommentEntering}
+								errorEnter={ErrorCommentEntering}
+								validationSchema={TextareaFormValidationSchema}
+								placeholder="Reply..."
+							/>
 						) : null}
 						<div>
-							{replies &&
-								replies.map((reply: commentType) => (
+							{allReplies &&
+								allReplies.map((reply: commentType) => (
 									<Comment
 										key={reply._id}
 										id={reply._id}
-										parentId={id}
 										postId={postId}
 										text={reply.text}
 										name={reply.author?.name || ''}
 										date={reply.updatedAt}
 										avatar={reply.author?.avatar || null}
 										replies={reply.replies}
-										likedComments={likedComments}
+										isSocial={reply.author.isSocial}
 									/>
 								))}
 						</div>

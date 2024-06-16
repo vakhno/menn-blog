@@ -1,9 +1,13 @@
 import React from 'react';
+// components
 import LikeButton from '@/components/shared/LikeButton/LikeButton';
+// redux hooks
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { useToast } from '@/components/ui/use-toast';
 import { ToastAction } from '@/components/ui/toast';
+// redux
 import { likeComment } from '@/lib/redux/slices/authSlice';
+// next tools
 import { useRouter } from 'next/navigation';
 
 type Props = {

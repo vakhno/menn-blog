@@ -1,11 +1,16 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
+// components
 import Post from '@/components/shared/Post/Post';
-import { useEffect } from 'react';
+// redux hooks
 import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks';
+// UI components
 import { Button } from '@/components/ui/button';
+// redux
 import { getPosts, setPosts } from '@/lib/redux/slices/postSlice';
+// utils
 import { commentsCount } from '@/utils/comments';
+// types
 import { postType } from '@/types/types';
 
 type Props = {
