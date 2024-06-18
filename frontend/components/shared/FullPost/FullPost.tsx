@@ -30,6 +30,8 @@ import { openPost } from '@/lib/redux/slices/postSlice';
 import { setReplyForm } from '@/lib/redux/slices/postSlice';
 // redux hooks
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+// utils
+import { commentsCount } from '@/utils/comments';
 
 type Props = {
 	id: string;
@@ -40,7 +42,6 @@ type Props = {
 	text: string;
 	image: string;
 	tags: tagType[];
-	commentsCount: number;
 	likesCount: number;
 	comments: commentType[];
 };
@@ -56,7 +57,7 @@ const newComment = async (params: {
 	postId: string;
 	comments: commentType[];
 }) => {
-	const { comments } = params;
+	const { comments, parentId } = params;
 	const response = await fetch('http://localhost:5555/post/send-comment', {
 		method: 'POST',
 		headers: {
@@ -67,7 +68,23 @@ const newComment = async (params: {
 	const result = await response.json();
 	const { comment } = result;
 	let updatedComments = [];
-	updatedComments = [...comments, comment];
+	if (parentId) {
+		const addingReplyToComment = (comment: commentType, reply: commentType, id: string) => {
+			if (comment._id === id) {
+				comment.replies = [...comment.replies, reply];
+			} else {
+				comment.replies.forEach((replyComment) => {
+					addingReplyToComment(replyComment, reply, id);
+				});
+			}
+		};
+		updatedComments = [...comments];
+		updatedComments.forEach((updateComment) => {
+			addingReplyToComment(updateComment, comment, parentId);
+		});
+	} else {
+		updatedComments = [...comments, comment];
+	}
 	return updatedComments;
 };
 
@@ -80,7 +97,6 @@ const FullPost = ({
 	text,
 	tags,
 	classNames,
-	commentsCount,
 	likesCount,
 	comments,
 }: Props) => {
@@ -91,7 +107,6 @@ const FullPost = ({
 	const userId = user?._id || null;
 	const authorId = author?._id || null;
 	const [allComments, setAllComments] = useState<commentType[]>(comments);
-	const [comment, setComment] = useState<string>('');
 
 	useEffect(() => {
 		dispatch(openPost({ id }));
@@ -101,16 +116,13 @@ const FullPost = ({
 		return cleanUp;
 	}, []);
 
-	const handleCommentChange = (value: string) => {
-		setComment(value);
-	};
-
-	const SuccessCommentEntering = async () => {
+	const SuccessCommentEntering = async (text: string, parentId?: string) => {
 		const newComments = await newComment({
 			userId: userId,
 			postId: id,
-			comment: comment,
+			comment: text,
 			comments: allComments,
+			parentId: parentId,
 		});
 		setAllComments(newComments);
 	};
@@ -145,11 +157,14 @@ const FullPost = ({
 				</div>
 				<PostActions postId={id} userId={userId} authorId={authorId} />
 				<div>
-					<PostComments comments={allComments} postId={id} />
+					<PostComments
+						comments={allComments}
+						postId={id}
+						successReply={(text, parentId) => SuccessCommentEntering(text, parentId)}
+					/>
 					<TextareaForm
 						isSuccess={!!userId}
-						handleChange={handleCommentChange}
-						successEnter={SuccessCommentEntering}
+						successEnter={(text) => SuccessCommentEntering(text)}
 						errorEnter={ErrorCommentEntering}
 						validationSchema={TextareaFormValidationSchema}
 						placeholder="Comment..."
@@ -159,7 +174,7 @@ const FullPost = ({
 			<CardFooter>
 				<div className="flex justify-between w-full">
 					<PostTags tags={tags} />
-					<PostSocialActivity likesCount={likesCount} commentsCount={commentsCount} />
+					<PostSocialActivity likesCount={likesCount} commentsCount={commentsCount(allComments)} />
 				</div>
 			</CardFooter>
 		</Card>

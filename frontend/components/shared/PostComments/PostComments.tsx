@@ -7,9 +7,10 @@ import Comment from '@/components/shared/Comment/Comment';
 type Props = {
 	comments: commentType[];
 	postId: string;
+	successReply: (text: string, parentId?: string) => void;
 };
 
-const PostComments = ({ comments, postId }: Props) => {
+const PostComments = ({ comments, postId, successReply }: Props) => {
 	return (
 		<div>
 			<h4 className="mb-2">Comments:</h4>
@@ -27,6 +28,7 @@ const PostComments = ({ comments, postId }: Props) => {
 								avatar={comment.author.avatar}
 								replies={comment.replies}
 								isSocial={comment.author.isSocial}
+								successReply={(text, parentId) => successReply(text, parentId)}
 							/>
 						))}
 					</>

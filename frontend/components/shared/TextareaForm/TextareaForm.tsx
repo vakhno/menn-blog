@@ -20,7 +20,7 @@ type Props = {
 	isSuccess?: boolean;
 	validationSchema?: ZodSchema;
 	handleChange?: (value: string) => void;
-	successEnter?: () => void;
+	successEnter?: (text: string) => void;
 	errorEnter?: () => void;
 };
 
@@ -39,10 +39,11 @@ const TextareaForm = ({
 		},
 		resolver: validationSchema ? zodResolver(validationSchema) : undefined,
 	});
+	const textWatch = form.watch('text');
 
 	const handleSubmit = (values: { text: string }) => {
 		if (isSuccess) {
-			successEnter && successEnter();
+			successEnter && successEnter(form.getValues('text'));
 			form.reset();
 		} else {
 			errorEnter && errorEnter();
@@ -51,7 +52,7 @@ const TextareaForm = ({
 
 	useEffect(() => {
 		handleChange && handleChange(form.getValues('text'));
-	}, [form.watch('text')]);
+	}, [textWatch]);
 
 	return (
 		<Form {...form}>

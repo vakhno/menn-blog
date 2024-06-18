@@ -26,28 +26,6 @@ const TextareaFormValidationSchema = z.object({
 	text: z.string().min(1, { message: 'Reply is too short!' }),
 });
 
-const newComment = async (params: {
-	parentId?: string;
-	userId: string | null;
-	comment: string;
-	postId: string;
-	replies: commentType[];
-}) => {
-	const { replies } = params;
-	const response = await fetch('http://localhost:5555/post/send-comment', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(params),
-	});
-	const result = await response.json();
-	const { comment } = result;
-	let updatedReplies = [];
-	updatedReplies = [...replies, comment];
-	return updatedReplies;
-};
-
 type Props = {
 	id: string;
 	name: string | null;
@@ -57,30 +35,28 @@ type Props = {
 	avatar: string | null;
 	replies?: commentType[];
 	isSocial: boolean;
+	successReply: (text: string, parentId?: string) => void;
 };
 
-const Comment = ({ id, name, postId, date, text, avatar, replies, isSocial }: Props) => {
+const Comment = ({
+	id,
+	name,
+	postId,
+	date,
+	text,
+	avatar,
+	replies,
+	isSocial,
+	successReply,
+}: Props) => {
 	const { toast } = useToast();
 	const router = useRouter();
 	const user = useAppSelector((state) => state.auth.user);
 	const userId = user?._id || null;
 	const [isCommentReplyFormActive, setIsCommentReplyFormActive] = useState<boolean>(false);
-	const [allReplies, setAllReplies] = useState<commentType[]>(replies || []);
-	const [comment, setComment] = useState<string>('');
 
-	const handleCommentChange = (value: string) => {
-		setComment(value);
-	};
-
-	const SuccessCommentEntering = async () => {
-		const newReplies = await newComment({
-			userId: userId,
-			postId: postId,
-			comment: comment,
-			parentId: id,
-			replies: allReplies,
-		});
-		setAllReplies(newReplies);
+	const SuccessCommentEntering = async (text: string) => {
+		successReply(text, id);
 		setIsCommentReplyFormActive(false);
 	};
 
@@ -138,16 +114,15 @@ const Comment = ({ id, name, postId, date, text, avatar, replies, isSocial }: Pr
 						{isCommentReplyFormActive ? (
 							<TextareaForm
 								isSuccess={!!userId}
-								handleChange={handleCommentChange}
-								successEnter={SuccessCommentEntering}
+								successEnter={(text) => SuccessCommentEntering(text)}
 								errorEnter={ErrorCommentEntering}
 								validationSchema={TextareaFormValidationSchema}
 								placeholder="Reply..."
 							/>
 						) : null}
 						<div>
-							{allReplies &&
-								allReplies.map((reply: commentType) => (
+							{replies &&
+								replies.map((reply: commentType) => (
 									<Comment
 										key={reply._id}
 										id={reply._id}
@@ -158,6 +133,7 @@ const Comment = ({ id, name, postId, date, text, avatar, replies, isSocial }: Pr
 										avatar={reply.author?.avatar || null}
 										replies={reply.replies}
 										isSocial={reply.author.isSocial}
+										successReply={successReply}
 									/>
 								))}
 						</div>

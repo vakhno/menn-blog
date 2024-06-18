@@ -4,7 +4,6 @@ import React from 'react';
 // import 'froala-editor/css/froala_style.min.css';
 // import 'froala-editor/js/plugins.pkgd.min.js';
 import FullPost from '@/components/shared/FullPost/FullPost';
-import { commentsCount } from '@/utils/comments';
 import { Suspense } from 'react';
 import PostSkeleton from '@/components/skeletons/PostSkeleton';
 import SomethingWentWrong from '@/components/shared/SomethingWentWrong/SomethingWentWrong';
@@ -55,7 +54,6 @@ const page = async ({ params }: Props) => {
 					author={post.author}
 					likesCount={post.likes}
 					comments={post.comments}
-					commentsCount={commentsCount(post.comments)}
 				/>
 			</Suspense>
 		);

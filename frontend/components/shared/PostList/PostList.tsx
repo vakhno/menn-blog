@@ -22,7 +22,6 @@ const PostList = ({ posts, isAllPostsUploaded }: Props) => {
 	const dispatch = useAppDispatch();
 	const { data, status, page, isAllUploaded } = useAppSelector((state) => state.post.posts);
 
-	console.log(posts);
 	useEffect(() => {
 		dispatch(setPosts({ posts, isAllPostsUploaded }));
 	}, [posts]);
