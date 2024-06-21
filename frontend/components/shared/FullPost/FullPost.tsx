@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 // UI components
 import { useToast } from '@/components/ui/use-toast';
 import { ToastAction } from '@/components/ui/toast';
@@ -32,18 +32,14 @@ import { setReplyForm } from '@/lib/redux/slices/postSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 // utils
 import { commentsCount } from '@/utils/comments';
+// react-query
+import { useQuery } from '@tanstack/react-query';
+// actions
+import { getPostById } from '@/actions/posts';
+import SomethingWentWrong from '@/components/shared/SomethingWentWrong/SomethingWentWrong';
 
 type Props = {
 	id: string;
-	classNames?: string;
-	author?: authorType;
-	title: string;
-	description: string;
-	text: string;
-	image: string;
-	tags: tagType[];
-	likesCount: number;
-	comments: commentType[];
 };
 
 const TextareaFormValidationSchema = z.object({
@@ -88,97 +84,106 @@ const newComment = async (params: {
 	return updatedComments;
 };
 
-const FullPost = ({
-	id,
-	author,
-	image,
-	title,
-	description,
-	text,
-	tags,
-	classNames,
-	likesCount,
-	comments,
-}: Props) => {
-	const dispatch = useAppDispatch();
-	const { toast } = useToast();
-	const router = useRouter();
-	const user = useAppSelector((state) => state.auth.user);
-	const userId = user?._id || null;
-	const authorId = author?._id || null;
-	const [allComments, setAllComments] = useState<commentType[]>(comments);
+const FullPost = ({ id }: Props) => {
+	try {
+		const { data } = useQuery({
+			queryFn: () => getPostById(id),
+			queryKey: ['postById'],
+		});
 
-	useEffect(() => {
-		dispatch(openPost({ id }));
-		const cleanUp = () => {
-			dispatch(setReplyForm({ id: null }));
+		const { success } = data;
+
+		if (!success) {
+			throw new Error();
+		}
+
+		const { author, image, title, description, text, tags, classNames, likesCount, comments } =
+			data.post;
+		const dispatch = useAppDispatch();
+		const { toast } = useToast();
+		const router = useRouter();
+		const user = useAppSelector((state) => state.auth.user);
+		const userId = user?._id || null;
+		const authorId = author?._id || null;
+		const [allComments, setAllComments] = useState<commentType[]>(comments);
+
+		useEffect(() => {
+			dispatch(openPost({ id }));
+			const cleanUp = () => {
+				dispatch(setReplyForm({ id: null }));
+			};
+			return cleanUp;
+		}, []);
+
+		const SuccessCommentEntering = async (text: string, parentId?: string) => {
+			const newComments = await newComment({
+				userId: userId,
+				postId: id,
+				comment: text,
+				comments: allComments,
+				parentId: parentId,
+			});
+			setAllComments(newComments);
 		};
-		return cleanUp;
-	}, []);
 
-	const SuccessCommentEntering = async (text: string, parentId?: string) => {
-		const newComments = await newComment({
-			userId: userId,
-			postId: id,
-			comment: text,
-			comments: allComments,
-			parentId: parentId,
-		});
-		setAllComments(newComments);
-	};
+		const ErrorCommentEntering = () => {
+			toast({
+				title: 'Error',
+				description: `To comment you should Sign In`,
+				variant: 'destructive',
+				action: (
+					<ToastAction altText="Sign In" onClick={() => router.push('/auth/signin')}>
+						Sign In
+					</ToastAction>
+				),
+			});
+		};
 
-	const ErrorCommentEntering = () => {
-		toast({
-			title: 'Error',
-			description: `To comment you should Sign In`,
-			variant: 'destructive',
-			action: (
-				<ToastAction altText="Sign In" onClick={() => router.push('/auth/signin')}>
-					Sign In
-				</ToastAction>
-			),
-		});
-	};
-
-	return (
-		<Card className={`${classNames}`}>
-			<CardHeader>
-				<CardTitle className="break-words">{title}</CardTitle>
-				<CardDescription>{description}</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<div className="mb-6">
-					{image ? (
-						<img src={`${process.env.NEXT_PUBLIC_POSTS_UPLOAD_URI}${image}`} alt={title} />
-					) : null}
-				</div>
-				<div className="mb-6">
-					<FroalaEditorView model={text} />
-				</div>
-				<PostActions postId={id} userId={userId} authorId={authorId} />
-				<div>
-					<PostComments
-						comments={allComments}
-						postId={id}
-						successReply={(text, parentId) => SuccessCommentEntering(text, parentId)}
-					/>
-					<TextareaForm
-						isSuccess={!!userId}
-						successEnter={(text) => SuccessCommentEntering(text)}
-						errorEnter={ErrorCommentEntering}
-						validationSchema={TextareaFormValidationSchema}
-						placeholder="Comment..."
-					/>
-				</div>
-			</CardContent>
-			<CardFooter>
-				<div className="flex justify-between w-full">
-					<PostTags tags={tags} />
-					<PostSocialActivity likesCount={likesCount} commentsCount={commentsCount(allComments)} />
-				</div>
-			</CardFooter>
-		</Card>
-	);
+		return (
+			<Card className={`${classNames}`}>
+				<CardHeader>
+					<CardTitle className="break-words">{title}</CardTitle>
+					<CardDescription>{description}</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<div className="mb-6">
+						{image ? (
+							<img src={`${process.env.NEXT_PUBLIC_POSTS_UPLOAD_URI}${image}`} alt={title} />
+						) : null}
+					</div>
+					<div className="mb-6">
+						<FroalaEditorView model={text} />
+					</div>
+					<PostActions postId={id} userId={userId} authorId={authorId} />
+					<div>
+						<PostComments
+							comments={allComments}
+							postId={id}
+							successReply={(text, parentId) => SuccessCommentEntering(text, parentId)}
+						/>
+						<TextareaForm
+							isSuccess={!!userId}
+							successEnter={(text) => SuccessCommentEntering(text)}
+							errorEnter={ErrorCommentEntering}
+							validationSchema={TextareaFormValidationSchema}
+							placeholder="Comment..."
+						/>
+					</div>
+				</CardContent>
+				<CardFooter>
+					<div className="flex justify-between w-full">
+						<PostTags tags={tags} />
+						<PostSocialActivity
+							likesCount={likesCount}
+							commentsCount={commentsCount(allComments)}
+						/>
+					</div>
+				</CardFooter>
+			</Card>
+		);
+	} catch (error) {
+		return <SomethingWentWrong />;
+	}
 };
 
 export default FullPost;

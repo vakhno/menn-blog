@@ -1,56 +1,19 @@
 'use server';
-// export const dynamic = 'auto';
 import { Suspense } from 'react';
-import PostList from '@/components/shared/PostList/PostList';
+// page component
+import Posts from '@/pages/Posts/Posts';
 import PostListSkeleton from '@/components/skeletons/PostListSkeleton';
-import SomethingWentWrong from '@/components/shared/SomethingWentWrong/SomethingWentWrong';
 
-const getPosts = async (page: string) => {
-	const response = await fetch('http://localhost:5555/post/post-by-page', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			// 'Cache-Control': 'no-store',
-		},
-		body: JSON.stringify({ page }),
-		// cache: 'no-store',
-		// next: { revalidate: 60 },
-	});
-	if (!response.ok) {
-		throw new Error();
-	}
-
-	return response.json();
-};
-
-type Props = {
-	searchParams: { [key: string]: string | string[] | undefined };
-};
-
-const Page = async ({ searchParams }: Props) => {
-	try {
-		const page = searchParams['page'] as string;
-		const result = await getPosts(page);
-		const { success, isAllUploaded, posts } = result;
-
-		if (!success) {
-			throw new Error();
-		}
-
-		return (
-			<section>
-				<Suspense fallback={<PostListSkeleton />}>
-					<PostList posts={posts} isAllPostsUploaded={isAllUploaded} />
-				</Suspense>
-			</section>
-		);
-	} catch (error) {
-		return (
-			<section>
-				<SomethingWentWrong />
-			</section>
-		);
-	}
+const Page = () => {
+	return (
+		// this Suspense will be shown while posts is caching (first caching)
+		// and also before uploading cached posts and to cancel displaying
+		// Suspense before uploading cached posts inside </Posts> jsx should we wrapped
+		// with empty Suspense
+		<Suspense fallback={<PostListSkeleton />}>
+			<Posts />
+		</Suspense>
+	);
 };
 
 export default Page;

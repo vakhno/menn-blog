@@ -74,7 +74,7 @@ const Comment = ({
 	};
 
 	return (
-		<div className="flex w-full gap-2 mb-4">
+		<div className="flex flex-col w-full gap-2 mb-4">
 			<Avatar className="group relative cursor-pointer">
 				<Link href="/">
 					{avatar ? (
@@ -120,25 +120,25 @@ const Comment = ({
 								placeholder="Reply..."
 							/>
 						) : null}
-						<div>
-							{replies &&
-								replies.map((reply: commentType) => (
-									<Comment
-										key={reply._id}
-										id={reply._id}
-										postId={postId}
-										text={reply.text}
-										name={reply.author?.name || ''}
-										date={reply.updatedAt}
-										avatar={reply.author?.avatar || null}
-										replies={reply.replies}
-										isSocial={reply.author.isSocial}
-										successReply={successReply}
-									/>
-								))}
-						</div>
 					</div>
 				</div>
+			</div>
+			<div className="ml-10">
+				{replies &&
+					replies.map((reply: commentType) => (
+						<Comment
+							key={reply._id}
+							id={reply._id}
+							postId={postId}
+							text={reply.text}
+							name={reply.author?.name || ''}
+							date={reply.updatedAt}
+							avatar={reply.author?.avatar || null}
+							replies={reply.replies}
+							isSocial={reply.author.isSocial}
+							successReply={successReply}
+						/>
+					))}
 			</div>
 		</div>
 	);

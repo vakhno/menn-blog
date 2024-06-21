@@ -39,12 +39,12 @@ export default async function RootLayout({
 				/>
 			</head>
 			<body className={inter.className}>
-				<StoreProvider>
-					<QueryProvider>
-						<main className="h-full">{children}</main>
-					</QueryProvider>
-					<Toaster />
-				</StoreProvider>
+				<main className="h-full">
+					<StoreProvider>
+						<QueryProvider>{children}</QueryProvider>
+						<Toaster />
+					</StoreProvider>
+				</main>
 			</body>
 		</html>
 	);
